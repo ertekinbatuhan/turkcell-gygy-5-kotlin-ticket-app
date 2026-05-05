@@ -24,3 +24,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Ticket App"
 include(":app")
+include(":core")
+include(":data")
