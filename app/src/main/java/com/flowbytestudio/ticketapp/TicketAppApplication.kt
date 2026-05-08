@@ -1,6 +1,7 @@
 package com.flowbytestudio.ticketapp
 
 import android.app.Application
+import com.flowbytestudio.data.di.dataModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -17,7 +18,7 @@ class TicketAppApplication : Application(){
             androidLogger()
             androidContext(this@TicketAppApplication)
             modules(
-
+                dataModule
             )
         }
     }
