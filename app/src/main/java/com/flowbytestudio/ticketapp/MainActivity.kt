@@ -9,7 +9,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.flowbytestudio.core.domain.AuthRepository
 import com.flowbytestudio.core.ui.theme.TicketAppTheme
-import com.flowbytestudio.ticketapp.auth.LoginScreen
+import com.flowbytestudio.ticketapp.navigation.AppNavHost
+import com.flowbytestudio.ticketapp.screen.LoginScreen
 import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
@@ -21,7 +22,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             TicketAppTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    LoginScreen(authRepository = authRepository)
+                    AppNavHost()
                 }
             }
         }

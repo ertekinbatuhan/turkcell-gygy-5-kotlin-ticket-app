@@ -13,11 +13,14 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 private const val BASE_URL = "https://tickets-api.halitkalayci.com/"
 
+// Single ( Singleton) uygulama yaşam döngü boyunca tek örnek
+// retrofit tek örnek
 val dataModule = module {
     single {
         Json {
             ignoreUnknownKeys = true
             isLenient = true
+            explicitNulls = false
         }
     }
 
