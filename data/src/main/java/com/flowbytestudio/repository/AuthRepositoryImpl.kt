@@ -5,6 +5,7 @@ import com.flowbytestudio.core.domain.AuthSession
 import com.flowbytestudio.core.domain.User
 import com.flowbytestudio.core.domain.UserRole
 import com.flowbytestudio.data.dto.CredentialsDto
+import com.flowbytestudio.data.dto.TokenPairDto
 import com.flowbytestudio.data.util.runCatchingApi
 import com.flowbytestudio.remote.AuthApi
 import kotlinx.coroutines.flow.Flow
@@ -20,26 +21,26 @@ class AuthRepositoryImpl(
         password: String
     ): Result<AuthSession> = runCatchingApi {
         authApi.login(CredentialsDto(email = email, password = password))
-    }.onSuccess {
-
-    }
-        .map {
-            i -> AuthSession(
-            user = User(
-                i.user.id, i.user.email, UserRole.fromApi(i.user.role),
-            ),
-            accessToken = i.accessToken,
-            refreshToken = i.refreshToken)
-        }
+    }.map { it.toAuthSession() }
 
     override suspend fun register(
         email: String,
         password: String
-    ): Result<AuthSession> {
-        TODO("Not yet implemented")
-    }
+    ): Result<AuthSession> = runCatchingApi {
+        authApi.register(CredentialsDto(email = email, password = password))
+    }.map { it.toAuthSession() }
 
     override suspend fun logout(): Result<Unit> {
         TODO("Not yet implemented")
     }
+
+    private fun TokenPairDto.toAuthSession(): AuthSession = AuthSession(
+        user = User(
+            id = user.id,
+            email = user.email,
+            role = UserRole.fromApi(user.role),
+        ),
+        accessToken = accessToken,
+        refreshToken = refreshToken,
+    )
 }

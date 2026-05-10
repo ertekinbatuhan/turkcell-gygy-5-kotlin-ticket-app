@@ -40,20 +40,16 @@ class LoginViewModel(
         _state.update { it.copy(isLoading = true, errorMessage = null) }
 
         viewModelScope.launch {
-            authRepository.login(current.email, current.password)
+            authRepository.login(current.email.trim(), current.password)
                 .onSuccess { _state.update { it.copy(isLoading = false, isLoggedIn = true) } }
-            viewModelScope.launch {
-                authRepository.login(current.email, current.password)
-                    .onSuccess { _state.update { it.copy(isLoading = false, isLoggedIn = true) } }
-                    .onFailure { error ->
-                        _state.update {
-                            it.copy(
-                                isLoading = false,
-                                errorMessage = error.toUserMessage()
-                            )
-                        }
+                .onFailure { error ->
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = error.toUserMessage()
+                        )
                     }
-            }
+                }
         }
 
     }

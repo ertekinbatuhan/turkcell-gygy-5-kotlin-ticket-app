@@ -1,12 +1,12 @@
 package com.flowbytestudio.ticketapp.navigation
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.flowbytestudio.ticketapp.screen.LoginScreen
+import com.flowbytestudio.ticketapp.screen.RegisterScreen
 
 
 @Composable
@@ -23,7 +23,9 @@ fun AppNavHost(
             )
         }
         composable<Register> {
-            Text("Register Screen")
+            RegisterScreen(
+                onNavigateToLogin = { navController.popBackStack() }
+            )
         }
     }
 }
