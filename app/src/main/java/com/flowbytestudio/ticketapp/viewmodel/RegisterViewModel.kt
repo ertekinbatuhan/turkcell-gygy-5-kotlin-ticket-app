@@ -3,8 +3,8 @@ package com.flowbytestudio.ticketapp.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flowbytestudio.core.domain.AuthRepository
-import com.flowbytestudio.data.network.ApiException
-import com.flowbytestudio.data.network.NetworkException
+import com.flowbytestudio.ticketapp.util.AuthErrorContext
+import com.flowbytestudio.ticketapp.util.toAuthUserMessage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -57,21 +57,10 @@ class RegisterViewModel(
                     _state.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = error.toUserMessage()
+                            errorMessage = error.toAuthUserMessage(AuthErrorContext.Register)
                         )
                     }
                 }
         }
-    }
-
-    internal fun Throwable.toUserMessage(): String = when (this) {
-        is ApiException -> when (code) {
-            400 -> "Email veya şifre formatı geçersiz"
-            409 -> "Bu email ile kayıtlı bir hesap zaten var"
-            else -> "Beklenmeyen bir hata oluştu"
-        }
-
-        is NetworkException -> "İnternet bağlantısı yok"
-        else -> message ?: "Bilinmeyen bir hata oluştu."
     }
 }
