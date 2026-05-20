@@ -5,11 +5,7 @@ plugins {
 
 android {
     namespace = "com.flowbytestudio.core"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 24
