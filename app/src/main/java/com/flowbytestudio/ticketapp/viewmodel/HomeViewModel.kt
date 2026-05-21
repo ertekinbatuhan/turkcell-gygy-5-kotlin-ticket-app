@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flowbytestudio.core.domain.Event
 import com.flowbytestudio.core.domain.Ticket
-import com.flowbytestudio.core.domain.TicketRepository
+import com.flowbytestudio.core.domain.EventRepository
 import com.flowbytestudio.ticketapp.util.HomeErrorContext
 import com.flowbytestudio.ticketapp.util.toHomeUserMessage
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +28,7 @@ data class HomeUiState(
 )
 
 class HomeViewModel(
-    private val ticketRepository: TicketRepository,
+    private val eventRepository: EventRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeUiState())
     val state: StateFlow<HomeUiState> = _state.asStateFlow()
@@ -53,8 +53,8 @@ class HomeViewModel(
         }
 
         viewModelScope.launch {
-            val eventsResult = ticketRepository.getEvents(upcoming = true)
-            val ticketsResult = ticketRepository.getMyTickets()
+            val eventsResult = eventRepository.getEvents(upcoming = null)
+            val ticketsResult = eventRepository.getMyTickets()
 
             val errorMessage = listOfNotNull(
                 eventsResult.exceptionOrNull()?.toHomeUserMessage(HomeErrorContext.Events),

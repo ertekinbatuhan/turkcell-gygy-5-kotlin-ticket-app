@@ -1,14 +1,14 @@
 package com.flowbytestudio.data.di
 
 import com.flowbytestudio.core.domain.AuthRepository
-import com.flowbytestudio.core.domain.TicketRepository
+import com.flowbytestudio.core.domain.EventRepository
 import com.flowbytestudio.data.local.TokenStore
 import com.flowbytestudio.data.network.AuthInterceptor
 import com.flowbytestudio.data.network.TokenAuthenticator
 import com.flowbytestudio.remote.AuthApi
-import com.flowbytestudio.remote.TicketApi
+import com.flowbytestudio.remote.EventApi
 import com.flowbytestudio.repository.AuthRepositoryImpl
-import com.flowbytestudio.repository.TicketRepositoryImpl
+import com.flowbytestudio.repository.EventRepositoryImpl
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -72,7 +72,7 @@ val dataModule = module {
     }
 
     single { get<Retrofit>().create(AuthApi::class.java) }
-    single { get<Retrofit>().create(TicketApi::class.java) }
+    single { get<Retrofit>().create(EventApi::class.java) }
 
     single<AuthRepository> {
         AuthRepositoryImpl(
@@ -81,8 +81,8 @@ val dataModule = module {
         )
     }
 
-    single<TicketRepository> {
-        TicketRepositoryImpl(ticketApi = get())
+    single<EventRepository> {
+        EventRepositoryImpl(eventApi = get())
     }
 
     // factory -> Her çağırıldığı noktada yeni instance üretir. Her fonksiyon için birer örnek
