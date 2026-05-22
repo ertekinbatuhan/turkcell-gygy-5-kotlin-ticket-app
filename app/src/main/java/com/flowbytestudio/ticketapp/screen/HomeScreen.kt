@@ -50,6 +50,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreen(
+    onTicketClick: (String) -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -58,6 +59,7 @@ fun HomeScreen(
         state = state,
         onRefresh = viewModel::refresh,
         onTabSelected = viewModel::selectTab,
+        onTicketClick = onTicketClick,
     )
 }
 
@@ -66,6 +68,7 @@ private fun HomeContent(
     state: HomeUiState,
     onRefresh: () -> Unit,
     onTabSelected: (HomeTab) -> Unit,
+    onTicketClick: (String) -> Unit,
 ) {
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -106,6 +109,7 @@ private fun HomeContent(
                     HomeTab.Tickets -> ticketsContent(
                         tickets = state.tickets,
                         events = state.events,
+                        onTicketClick = onTicketClick,
                     )
                 }
             }
@@ -257,6 +261,7 @@ private fun androidx.compose.foundation.lazy.LazyListScope.eventsContent(events:
 private fun androidx.compose.foundation.lazy.LazyListScope.ticketsContent(
     tickets: List<Ticket>,
     events: List<Event>,
+    onTicketClick: (String) -> Unit,
 ) {
     if (tickets.isEmpty()) {
         item {
@@ -270,7 +275,11 @@ private fun androidx.compose.foundation.lazy.LazyListScope.ticketsContent(
             val ticketInfo = remember(events, ticket.ticketTypeId) {
                 events.ticketInfoByType()[ticket.ticketTypeId]
             }
-            TicketCard(ticket = ticket, info = ticketInfo)
+            TicketCard(
+                ticket = ticket,
+                info = ticketInfo,
+                onClick = { onTicketClick(ticket.id) }
+            )
         }
     }
 }
@@ -349,12 +358,14 @@ private fun EventCard(event: Event) {
 private fun TicketCard(
     ticket: Ticket,
     info: TicketDisplayInfo?,
+    onClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        onClick = onClick,
     ) {
         Column(
             modifier = Modifier.padding(16.dp),

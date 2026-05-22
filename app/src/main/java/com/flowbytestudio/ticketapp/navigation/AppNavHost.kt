@@ -12,10 +12,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.flowbytestudio.core.domain.AuthRepository
+import com.flowbytestudio.ticketapp.navigation.TicketDetail
 import com.flowbytestudio.ticketapp.screen.HomeScreen
 import com.flowbytestudio.ticketapp.screen.LoginScreen
 import com.flowbytestudio.ticketapp.screen.RegisterScreen
+import com.flowbytestudio.ticketapp.screen.TicketDetailScreen
 import org.koin.compose.koinInject
 
 
@@ -46,7 +49,18 @@ private fun SplashScreen(){
 private fun AuthedNavHost(navController: NavHostController){
     NavHost(navController=navController, startDestination = Home){
         composable<Home> {
-            HomeScreen()
+            HomeScreen(
+                onTicketClick = { ticketId ->
+                    navController.navigate(TicketDetail(ticketId = ticketId))
+                }
+            )
+        }
+        composable<TicketDetail> { backStackEntry ->
+            val route = backStackEntry.toRoute<TicketDetail>()
+            TicketDetailScreen(
+                ticketId = route.ticketId,
+                onBackClick = { navController.navigateUp() }
+            )
         }
     }
 }
