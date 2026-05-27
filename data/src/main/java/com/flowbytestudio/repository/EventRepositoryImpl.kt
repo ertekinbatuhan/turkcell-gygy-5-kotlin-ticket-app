@@ -14,7 +14,15 @@ class EventRepositoryImpl(
         runCatchingApi { eventApi.getEvents(upcoming = upcoming) }
             .map { events -> events.map { it.toDomain() } }
 
+    override suspend fun getEvent(id: String): Result<Event> =
+        runCatchingApi { eventApi.getEvent(id = id) }
+            .map { it.toDomain() }
+
     override suspend fun getMyTickets(): Result<List<Ticket>> =
         runCatchingApi { eventApi.getMyTickets() }
             .map { tickets -> tickets.map { it.toDomain() } }
+
+    override suspend fun getTicket(id: String): Result<Ticket> =
+        runCatchingApi { eventApi.getTicket(id = id) }
+            .map { it.toDomain() }
 }

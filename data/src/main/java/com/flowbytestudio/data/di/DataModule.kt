@@ -7,8 +7,11 @@ import com.flowbytestudio.data.network.AuthInterceptor
 import com.flowbytestudio.data.network.TokenAuthenticator
 import com.flowbytestudio.remote.AuthApi
 import com.flowbytestudio.remote.EventApi
+import com.flowbytestudio.remote.PurchaseApi
 import com.flowbytestudio.repository.AuthRepositoryImpl
 import com.flowbytestudio.repository.EventRepositoryImpl
+import com.flowbytestudio.repository.PurchaseRepositoryImpl
+import com.flowbytestudio.core.domain.purchase.PurchaseRepository
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -73,6 +76,7 @@ val dataModule = module {
 
     single { get<Retrofit>().create(AuthApi::class.java) }
     single { get<Retrofit>().create(EventApi::class.java) }
+    single { get<Retrofit>().create(PurchaseApi::class.java) }
 
     single<AuthRepository> {
         AuthRepositoryImpl(
@@ -83,6 +87,10 @@ val dataModule = module {
 
     single<EventRepository> {
         EventRepositoryImpl(eventApi = get())
+    }
+
+    single<PurchaseRepository> {
+        PurchaseRepositoryImpl(purchaseApi = get())
     }
 
     // factory -> Her çağırıldığı noktada yeni instance üretir. Her fonksiyon için birer örnek

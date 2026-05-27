@@ -46,21 +46,64 @@ import com.flowbytestudio.ticketapp.viewmodel.HomeTab
 import com.flowbytestudio.ticketapp.viewmodel.HomeUiState
 import com.flowbytestudio.ticketapp.viewmodel.HomeViewModel
 import java.util.Locale
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import com.flowbytestudio.core.domain.AuthRepository
+import org.koin.compose.koinInject
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.ui.graphics.Color
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onTicketClick: (String) -> Unit,
+    onEventClick: (String) -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
+    authRepository: AuthRepository = koinInject()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
 
-    HomeContent(
-        state = state,
-        onRefresh = viewModel::refresh,
-        onTabSelected = viewModel::selectTab,
-        onTicketClick = onTicketClick,
-    )
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("TicketApp", fontWeight = FontWeight.ExtraBold) },
+                actions = {
+                    IconButton(onClick = {
+                        scope.launch {
+                            authRepository.logout()
+                        }
+                    }) {
+                        LogoutIcon(color = MaterialTheme.colorScheme.primary)
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.onBackground
+                )
+            )
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            HomeContent(
+                state = state,
+                onRefresh = viewModel::refresh,
+                onTabSelected = viewModel::selectTab,
+                onTicketClick = onTicketClick,
+                onEventClick = onEventClick,
+            )
+        }
+    }
 }
 
 @Composable
@@ -69,6 +112,7 @@ private fun HomeContent(
     onRefresh: () -> Unit,
     onTabSelected: (HomeTab) -> Unit,
     onTicketClick: (String) -> Unit,
+    onEventClick: (String) -> Unit,
 ) {
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -76,8 +120,7 @@ private fun HomeContent(
     ) {
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.safeDrawing),
+                .fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
@@ -105,7 +148,7 @@ private fun HomeContent(
                 item { LoadingState() }
             } else {
                 when (state.selectedTab) {
-                    HomeTab.Events -> eventsContent(events = state.events)
+                    HomeTab.Events -> eventsContent(events = state.events, onEventClick = onEventClick)
                     HomeTab.Tickets -> ticketsContent(
                         tickets = state.tickets,
                         events = state.events,
@@ -243,7 +286,10 @@ private fun HomeTabs(
     }
 }
 
-private fun androidx.compose.foundation.lazy.LazyListScope.eventsContent(events: List<Event>) {
+private fun androidx.compose.foundation.lazy.LazyListScope.eventsContent(
+    events: List<Event>,
+    onEventClick: (String) -> Unit,
+) {
     if (events.isEmpty()) {
         item {
             EmptyState(
@@ -253,7 +299,10 @@ private fun androidx.compose.foundation.lazy.LazyListScope.eventsContent(events:
         }
     } else {
         items(events, key = { it.id }) { event ->
-            EventCard(event = event)
+            EventCard(
+                event = event,
+                onClick = { onEventClick(event.id) }
+            )
         }
     }
 }
@@ -285,12 +334,16 @@ private fun androidx.compose.foundation.lazy.LazyListScope.ticketsContent(
 }
 
 @Composable
-private fun EventCard(event: Event) {
+private fun EventCard(
+    event: Event,
+    onClick: () -> Unit,
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        onClick = onClick,
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -643,3 +696,33 @@ private fun String.toDisplayTime(): String {
 }
 
 private fun String.shortId(): String = take(8).ifBlank { "--------" }
+
+@Composable
+private fun LogoutIcon(
+    color: Color,
+    modifier: Modifier = Modifier.size(24.dp)
+) {
+    androidx.compose.foundation.Canvas(modifier = modifier) {
+        val width = size.width
+        val height = size.height
+        val strokeWidthPx = 2.5.dp.toPx()
+        
+        // Draw the power arc
+        drawArc(
+            color = color,
+            startAngle = 135f,
+            sweepAngle = 270f,
+            useCenter = false,
+            topLeft = androidx.compose.ui.geometry.Offset(width * 0.15f, height * 0.15f),
+            size = androidx.compose.ui.geometry.Size(width * 0.7f, height * 0.7f),
+            style = androidx.compose.ui.graphics.drawscope.Stroke(width = strokeWidthPx)
+        )
+        // Draw the vertical line at the top center
+        drawLine(
+            color = color,
+            start = androidx.compose.ui.geometry.Offset(width * 0.5f, height * 0.1f),
+            end = androidx.compose.ui.geometry.Offset(width * 0.5f, height * 0.5f),
+            strokeWidth = strokeWidthPx
+        )
+    }
+}

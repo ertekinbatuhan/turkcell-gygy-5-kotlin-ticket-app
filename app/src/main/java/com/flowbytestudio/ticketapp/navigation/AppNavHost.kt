@@ -12,6 +12,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.internal.NavContext
 import androidx.navigation.toRoute
 import com.flowbytestudio.core.domain.AuthRepository
 import com.flowbytestudio.ticketapp.navigation.TicketDetail
@@ -19,7 +20,9 @@ import com.flowbytestudio.ticketapp.screen.HomeScreen
 import com.flowbytestudio.ticketapp.screen.LoginScreen
 import com.flowbytestudio.ticketapp.screen.RegisterScreen
 import com.flowbytestudio.ticketapp.screen.TicketDetailScreen
+import com.flowbytestudio.ticketapp.screen.EventDetailScreen
 import org.koin.compose.koinInject
+
 
 
 @Composable
@@ -52,6 +55,21 @@ private fun AuthedNavHost(navController: NavHostController){
             HomeScreen(
                 onTicketClick = { ticketId ->
                     navController.navigate(TicketDetail(ticketId = ticketId))
+                },
+                onEventClick = { eventId ->
+                    navController.navigate(EventDetail(id = eventId))
+                }
+            )
+        }
+        composable<EventDetail> { backStackEntry ->
+            val route = backStackEntry.toRoute<EventDetail>()
+            EventDetailScreen(
+                eventId = route.id,
+                onBackClick = { navController.navigateUp() },
+                onPurchaseSuccess = {
+                    navController.navigate(Home) {
+                        popUpTo(Home) { inclusive = true }
+                    }
                 }
             )
         }

@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">Ticket App</string>
+    <string name="event_detail_title">Etkinlik Detayı</string>
+    <string name="event_detail_back">Geri</string>
+    <string name="event_detail_retry">Yeniden Dene</string>
+    <string name="event_detail_unknown_error">Bilinmeyen bir hata oluştu.</string>
+    <string name="event_detail_description">AÇIKLAMA</string>
+    <string name="event_detail_close">Kapat</string>
+    <string name="event_detail_ticket_types">BİLET TÜRLERİ SEÇİMİ</string>
+    <string name="event_detail_no_tickets">Bu etkinlik için bilet seçeneği bulunmuyor.</string>
+    <string name="event_detail_sold_out">Tükendi</string>
+    <string name="event_detail_remaining_stock">Kalan Stok: %1$d</string>
+    <string name="event_detail_total_amount">TOPLAM TUTAR</string>
+    <string name="event_detail_purchase">Satın Al</string>
+    <string name="event_detail_payment_confirmation">Ödeme Onayı</string>
+    <string name="event_detail_payment_description">Bilet alım işlemini tamamlamak için aşağıdaki ödeme işlemini onaylayın (Bu işlem bir simülasyondur).</string>
+    <string name="event_detail_order_no">Sipariş No:</string>
+    <string name="event_detail_total_payment">Toplam Ödeme:</string>
+    <string name="event_detail_complete_payment">Ödemeyi Tamamla</string>
+    <string name="event_detail_cancel">İptal Et</string>
+    <string name="event_detail_free">Ücretsiz</string>
+    <string name="home_logout">Çıkış Yap</string>
 </resources>

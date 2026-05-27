@@ -18,7 +18,10 @@ data class RegisterUiState(
     val errorMessage: String? = null,
     val successMessage: String? = null,
 ) {
-    val canSubmit: Boolean get() = email.isNotBlank() && password.length >= 8 && !isLoading
+    val canSubmit: Boolean get() = email.isNotBlank() &&
+            android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() &&
+            password.length in 8..128 &&
+            !isLoading
 }
 
 class RegisterViewModel(

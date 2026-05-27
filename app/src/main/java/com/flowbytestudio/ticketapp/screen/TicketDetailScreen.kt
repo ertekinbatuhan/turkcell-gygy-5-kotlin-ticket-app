@@ -26,6 +26,14 @@ import com.flowbytestudio.core.domain.TicketStatus
 import com.flowbytestudio.core.domain.TicketType
 import com.flowbytestudio.ticketapp.viewmodel.TicketDetailUiState
 import com.flowbytestudio.ticketapp.viewmodel.TicketDetailViewModel
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.asImageBitmap
+import android.graphics.BitmapFactory
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import java.util.Locale
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -38,6 +46,8 @@ fun TicketDetailScreen(
     viewModel: TicketDetailViewModel = koinViewModel { parametersOf(ticketId) }
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    MaxBrightnessEffect()
 
     Scaffold(
         topBar = {
@@ -233,48 +243,36 @@ private fun TicketDetailContent(
                                 .padding(16.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            // Detailed visual representation of a mock QR Code
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                                verticalArrangement = Arrangement.Center
                             ) {
-                                // Draw QR-like pattern
-                                Canvas(modifier = Modifier.size(130.dp)) {
-                                    val sizePx = size.width
-                                    val cellSize = sizePx / 9f
-                                    
-                                    // Draw outer corner detection squares
-                                    drawDetectionSquare(0f, 0f, cellSize)
-                                    drawDetectionSquare(sizePx - 3 * cellSize, 0f, cellSize)
-                                    drawDetectionSquare(0f, sizePx - 3 * cellSize, cellSize)
-
-                                    // Draw random mock QR blocks to make it look highly authentic
-                                    val points = listOf(
-                                        Offset(4f, 0f), Offset(4f, 1f), Offset(4f, 3f), Offset(4f, 4f), Offset(4f, 7f),
-                                        Offset(0f, 4f), Offset(1f, 4f), Offset(3f, 4f), Offset(7f, 4f), Offset(8f, 4f),
-                                        Offset(5f, 5f), Offset(6f, 6f), Offset(5f, 7f), Offset(7f, 5f), Offset(8f, 8f),
-                                        Offset(3f, 3f), Offset(3f, 5f), Offset(5f, 3f), Offset(6f, 2f), Offset(2f, 6f)
-                                    )
-
-                                    points.forEach { pt ->
-                                        drawRect(
-                                            color = Color.Black,
-                                            topLeft = Offset(pt.x * cellSize, pt.y * cellSize),
-                                            size = androidx.compose.ui.geometry.Size(cellSize, cellSize)
-                                        )
-                                    }
+                                // Draw Actual QR Code
+                                val qrImageBitmap = remember(ticket.qrCode) {
+                                    runCatching {
+                                        val qrCode = qrcode.QRCode.ofSquares()
+                                            .withSize(15)
+                                            .build(ticket.qrCode)
+                                        val qrBytes = qrCode.renderToBytes()
+                                        val bitmap = BitmapFactory.decodeByteArray(qrBytes, 0, qrBytes.size)
+                                        bitmap.asImageBitmap()
+                                    }.getOrNull()
                                 }
 
-                                Spacer(modifier = Modifier.height(6.dp))
-
-                                Text(
-                                    text = ticket.qrCode.uppercase(Locale.getDefault()),
-                                    style = MaterialTheme.typography.labelLarge,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
+                                if (qrImageBitmap != null) {
+                                    androidx.compose.foundation.Image(
+                                        bitmap = qrImageBitmap,
+                                        contentDescription = "QR Code",
+                                        modifier = Modifier.size(130.dp)
+                                    )
+                                } else {
+                                    Box(
+                                        modifier = Modifier.size(130.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator()
+                                    }
+                                }
                             }
                         }
                     }
@@ -420,5 +418,34 @@ private fun BackArrowIcon(
             end = Offset(width * 0.45f, height * 0.78f),
             strokeWidth = strokeWidthPx
         )
+    }
+}
+private fun Context.findActivity(): Activity? {
+    var currentContext = this
+    while (currentContext is ContextWrapper) {
+        if (currentContext is Activity) {
+            return currentContext
+        }
+        currentContext = currentContext.baseContext
+    }
+    return null
+}
+
+@Composable
+private fun MaxBrightnessEffect() {
+    val context = LocalContext.current
+    DisposableEffect(Unit) {
+        val activity = context.findActivity()
+        val window = activity?.window
+        val layoutParams = window?.attributes
+        val originalBrightness = layoutParams?.screenBrightness ?: -1f
+        
+        layoutParams?.screenBrightness = 1.0f
+        window?.attributes = layoutParams
+        
+        onDispose {
+            layoutParams?.screenBrightness = originalBrightness
+            window?.attributes = layoutParams
+        }
     }
 }
