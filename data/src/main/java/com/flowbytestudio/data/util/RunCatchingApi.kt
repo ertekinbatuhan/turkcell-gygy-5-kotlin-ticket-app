@@ -10,7 +10,13 @@ suspend inline fun <T> runCatchingApi(crossinline block: suspend () -> T): Resul
     Result.success(block())
 } catch(e: HttpException)
 {
-    Result.failure(ApiException(code = e.code(), errorMessage = e.message(), cause = e))
+    val errorBodyStr = try {
+        e.response()?.errorBody()?.string()
+    } catch (ex: Exception) {
+        null
+    }
+    val errorMessage = if (!errorBodyStr.isNullOrBlank()) errorBodyStr else e.message()
+    Result.failure(ApiException(code = e.code(), errorMessage = errorMessage, cause = e))
 } catch(e: IOException)
 {
     Result.failure(NetworkException(e))

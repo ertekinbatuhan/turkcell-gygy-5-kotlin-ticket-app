@@ -29,7 +29,7 @@ private fun ApiException.toAuthApiUserMessage(context: AuthErrorContext): String
     when {
         context == AuthErrorContext.Login && code == 401 -> "Email veya şifre hatalı"
         context == AuthErrorContext.Register && code == 400 -> "Email veya şifre formatı geçersiz"
-        context == AuthErrorContext.Register && code == 409 -> "Bu email ile kayıtlı bir hesap zaten var"
+        context == AuthErrorContext.Register && code == 409 -> "Bu email zaten kayıtlı"
         code in 500..599 -> "Sunucu şu anda cevap veremiyor"
         else -> "Beklenmeyen bir hata oluştu"
     }
