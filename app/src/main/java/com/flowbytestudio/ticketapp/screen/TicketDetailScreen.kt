@@ -29,7 +29,7 @@ import com.flowbytestudio.core.domain.TicketStatus
 import com.flowbytestudio.core.domain.TicketType
 import com.flowbytestudio.ticketapp.viewmodel.TicketDetailUiState
 import com.flowbytestudio.ticketapp.viewmodel.TicketDetailViewModel
-import com.flowbytestudio.core.ui.components.TicketAppQRCode
+import com.flowbytestudio.core.ui.components.QRCodeImage
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalContext
@@ -247,7 +247,7 @@ private fun TicketDetailContent(
                                 .padding(16.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            TicketAppQRCode(
+                            QRCodeImage(
                                 qrCodeData = ticket.qrCode,
                                 modifier = Modifier.size(130.dp)
                             )
