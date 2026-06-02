@@ -1,7 +1,10 @@
 package com.flowbytestudio.ticketapp.screen
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -260,7 +263,7 @@ private fun TicketDetailContent(
                                 }
 
                                 if (qrImageBitmap != null) {
-                                    androidx.compose.foundation.Image(
+                                    Image(
                                         bitmap = qrImageBitmap,
                                         contentDescription = "QR Code",
                                         modifier = Modifier.size(130.dp)
@@ -289,18 +292,18 @@ private fun TicketDetailContent(
     }
 }
 
-private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawDetectionSquare(x: Float, y: Float, cellSize: Float) {
+private fun DrawScope.drawDetectionSquare(x: Float, y: Float, cellSize: Float) {
     // Outer black frame
     drawRect(
         color = Color.Black,
         topLeft = Offset(x, y),
-        size = androidx.compose.ui.geometry.Size(cellSize * 3, cellSize * 3)
+        size = Size(cellSize * 3, cellSize * 3)
     )
     // Inner white frame
     drawRect(
         color = Color.White,
         topLeft = Offset(x + cellSize, y + cellSize),
-        size = androidx.compose.ui.geometry.Size(cellSize, cellSize)
+        size = Size(cellSize, cellSize)
     )
 }
 

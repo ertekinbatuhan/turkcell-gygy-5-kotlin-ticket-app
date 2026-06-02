@@ -16,8 +16,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -289,7 +294,7 @@ private fun HomeTabs(
     }
 }
 
-private fun androidx.compose.foundation.lazy.LazyListScope.eventsContent(
+private fun LazyListScope.eventsContent(
     events: List<Event>,
     onEventClick: (String) -> Unit,
 ) {
@@ -310,7 +315,7 @@ private fun androidx.compose.foundation.lazy.LazyListScope.eventsContent(
     }
 }
 
-private fun androidx.compose.foundation.lazy.LazyListScope.ticketsContent(
+private fun LazyListScope.ticketsContent(
     tickets: List<Ticket>,
     events: List<Event>,
     onTicketClick: (String) -> Unit,
@@ -705,7 +710,7 @@ private fun LogoutIcon(
     color: Color,
     modifier: Modifier = Modifier.size(24.dp)
 ) {
-    androidx.compose.foundation.Canvas(modifier = modifier) {
+    Canvas(modifier = modifier) {
         val width = size.width
         val height = size.height
         val strokeWidthPx = 2.5.dp.toPx()
@@ -716,15 +721,15 @@ private fun LogoutIcon(
             startAngle = 135f,
             sweepAngle = 270f,
             useCenter = false,
-            topLeft = androidx.compose.ui.geometry.Offset(width * 0.15f, height * 0.15f),
-            size = androidx.compose.ui.geometry.Size(width * 0.7f, height * 0.7f),
-            style = androidx.compose.ui.graphics.drawscope.Stroke(width = strokeWidthPx)
+            topLeft = Offset(width * 0.15f, height * 0.15f),
+            size = Size(width * 0.7f, height * 0.7f),
+            style = Stroke(width = strokeWidthPx)
         )
         // Draw the vertical line at the top center
         drawLine(
             color = color,
-            start = androidx.compose.ui.geometry.Offset(width * 0.5f, height * 0.1f),
-            end = androidx.compose.ui.geometry.Offset(width * 0.5f, height * 0.5f),
+            start = Offset(width * 0.5f, height * 0.1f),
+            end = Offset(width * 0.5f, height * 0.5f),
             strokeWidth = strokeWidthPx
         )
     }
