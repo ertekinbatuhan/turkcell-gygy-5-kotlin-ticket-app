@@ -59,5 +59,5 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
-    implementation("io.github.g0dkar:qrcode-kotlin:4.1.1")
+    implementation(libs.qrcode.kotlin)
 }
