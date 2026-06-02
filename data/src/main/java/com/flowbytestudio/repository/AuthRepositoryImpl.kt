@@ -38,11 +38,21 @@ class AuthRepositoryImpl(
     override suspend fun register(
         email: String,
         password: String
-    ): Result<AuthSession> {
-        TODO("Not yet implemented")
+    ): Result<AuthSession> = runCatchingApi {
+        authApi.register(CredentialsDto(email=email, password=password))
+    }.onSuccess {
+        tokenStore.save(it.accessToken, it.refreshToken)
+    }.map { tokenPairDto ->
+        AuthSession(
+            user = User(
+                tokenPairDto.user.id, tokenPairDto.user.email, UserRole.fromApi(tokenPairDto.user.role),
+            ),
+            accessToken = tokenPairDto.accessToken,
+            refreshToken = tokenPairDto.refreshToken
+        )
     }
 
-    override suspend fun logout(): Result<Unit> {
-        TODO("Not yet implemented")
+    override suspend fun logout(): Result<Unit> = runCatching {
+        tokenStore.clear()
     }
 }
