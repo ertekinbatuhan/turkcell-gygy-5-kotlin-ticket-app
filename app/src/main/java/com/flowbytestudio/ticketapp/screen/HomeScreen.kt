@@ -136,8 +136,6 @@ private fun HomeContent(
                 HomeHeader(
                     eventsCount = state.events.size,
                     ticketsCount = state.tickets.size,
-                    isRefreshing = state.isRefreshing,
-                    onRefresh = onRefresh,
                 )
             }
 
@@ -172,43 +170,28 @@ private fun HomeContent(
 private fun HomeHeader(
     eventsCount: Int,
     ticketsCount: Int,
-    isRefreshing: Boolean,
-    onRefresh: () -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        Row(
+        Column(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+            verticalArrangement = Arrangement.spacedBy(3.dp),
         ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(3.dp),
-            ) {
-                Text(
-                    text = "Etkinlikler ve Biletlerim",
-                    style = MaterialTheme.typography.headlineMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    text = "Yaklaşan etkinlikler ve aktif biletlerin",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-
-            TextButton(
-                onClick = onRefresh,
-                enabled = !isRefreshing,
-            ) {
-                Text(if (isRefreshing) "Bekle" else "Yenile")
-            }
+            Text(
+                text = "Etkinlikler ve Biletlerim",
+                style = MaterialTheme.typography.headlineMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = "Yaklaşan etkinlikler ve aktif biletlerin",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
         }
 
         Row(
@@ -224,15 +207,6 @@ private fun HomeHeader(
                 modifier = Modifier.weight(1f),
                 label = "Bilet",
                 value = ticketsCount.toString(),
-            )
-        }
-
-        if (isRefreshing) {
-            LinearProgressIndicator(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(3.dp)
-                    .clip(RoundedCornerShape(8.dp)),
             )
         }
     }
