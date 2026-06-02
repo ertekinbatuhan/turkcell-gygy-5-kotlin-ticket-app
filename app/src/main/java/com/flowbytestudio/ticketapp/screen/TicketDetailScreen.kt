@@ -29,6 +29,7 @@ import com.flowbytestudio.core.domain.TicketStatus
 import com.flowbytestudio.core.domain.TicketType
 import com.flowbytestudio.ticketapp.viewmodel.TicketDetailUiState
 import com.flowbytestudio.ticketapp.viewmodel.TicketDetailViewModel
+import com.flowbytestudio.core.ui.components.TicketAppQRCode
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalContext
@@ -246,37 +247,10 @@ private fun TicketDetailContent(
                                 .padding(16.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                // Draw Actual QR Code
-                                val qrImageBitmap = remember(ticket.qrCode) {
-                                    runCatching {
-                                        val qrCode = qrcode.QRCode.ofSquares()
-                                            .withSize(15)
-                                            .build(ticket.qrCode)
-                                        val qrBytes = qrCode.renderToBytes()
-                                        val bitmap = BitmapFactory.decodeByteArray(qrBytes, 0, qrBytes.size)
-                                        bitmap.asImageBitmap()
-                                    }.getOrNull()
-                                }
-
-                                if (qrImageBitmap != null) {
-                                    Image(
-                                        bitmap = qrImageBitmap,
-                                        contentDescription = "QR Code",
-                                        modifier = Modifier.size(130.dp)
-                                    )
-                                } else {
-                                    Box(
-                                        modifier = Modifier.size(130.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        CircularProgressIndicator()
-                                    }
-                                }
-                            }
+                            TicketAppQRCode(
+                                qrCodeData = ticket.qrCode,
+                                modifier = Modifier.size(130.dp)
+                            )
                         }
                     }
 
