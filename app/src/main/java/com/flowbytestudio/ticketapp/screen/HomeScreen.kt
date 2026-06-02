@@ -55,6 +55,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import com.flowbytestudio.core.domain.AuthRepository
+import com.flowbytestudio.core.ui.components.TicketAppPullToRefresh
 import org.koin.compose.koinInject
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.ui.graphics.Color
@@ -90,7 +91,9 @@ fun HomeScreen(
             )
         }
     ) { paddingValues ->
-        Box(
+        TicketAppPullToRefresh(
+            isRefreshing = state.isRefreshing,
+            onRefresh = viewModel::refresh,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
