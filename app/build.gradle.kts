@@ -59,5 +59,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
+
+
+    //QR CODE
     implementation(libs.qrcode.kotlin)
+    implementation(libs.mlkit.barcode.scanning)
 }

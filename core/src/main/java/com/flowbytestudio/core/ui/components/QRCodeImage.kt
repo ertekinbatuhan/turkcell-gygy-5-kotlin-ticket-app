@@ -12,15 +12,6 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.location.LocationRequestCompat
 
-/**
- * A highly reusable and premium QR Code generator component.
- * It uses the 'qrcode-kotlin' library to generate QR codes directly in-memory
- * and renders them beautifully as a Jetpack Compose Image.
- *
- * @param qrCodeData The string data/payload to encode into the QR code.
- * @param modifier Optional modifier for the image container.
- * @param qrSize The dimension size in pixels for the generated QR modules (default is 15).
- */
 @Composable
 fun QRCodeImage(
     qrCodeData: String,

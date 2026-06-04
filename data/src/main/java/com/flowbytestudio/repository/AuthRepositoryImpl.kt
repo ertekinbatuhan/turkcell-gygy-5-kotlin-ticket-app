@@ -17,6 +17,9 @@ class AuthRepositoryImpl(
     private val tokenStore: TokenStore
 ) : AuthRepository {
     override val isLoggedIn: Flow<Boolean> = tokenStore.accessToken.map { it != null }
+    override val userRole: Flow<UserRole?> = tokenStore.userRole.map { value ->
+        value?.let { UserRole.fromApi(it) }
+    }
 
     override suspend fun login(
         email: String,
@@ -24,16 +27,16 @@ class AuthRepositoryImpl(
     ): Result<AuthSession> = runCatchingApi {
         authApi.login(CredentialsDto(email=email, password=password))
     }.onSuccess {
-        tokenStore.save(it.accessToken, it.refreshToken)
-    }
-        .map {
-                tokenPairDto -> AuthSession(
+        tokenStore.save(it.accessToken, it.refreshToken, it.user.role)
+    }.map { tokenPairDto ->
+        AuthSession(
             user = User(
                 tokenPairDto.user.id, tokenPairDto.user.email, UserRole.fromApi(tokenPairDto.user.role),
             ),
             accessToken = tokenPairDto.accessToken,
-            refreshToken = tokenPairDto.refreshToken)
-        }
+            refreshToken = tokenPairDto.refreshToken
+        )
+    }
 
     override suspend fun register(
         email: String,
@@ -41,7 +44,7 @@ class AuthRepositoryImpl(
     ): Result<AuthSession> = runCatchingApi {
         authApi.register(CredentialsDto(email=email, password=password))
     }.onSuccess {
-        tokenStore.save(it.accessToken, it.refreshToken)
+        tokenStore.save(it.accessToken, it.refreshToken, it.user.role)
     }.map { tokenPairDto ->
         AuthSession(
             user = User(

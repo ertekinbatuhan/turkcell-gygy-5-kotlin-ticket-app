@@ -37,7 +37,7 @@ class TokenAuthenticator(
                 return@synchronized null
             }
 
-            tokenStore.saveBlocking(newPair.accessToken, newPair.refreshToken)
+            tokenStore.saveBlocking(newPair.accessToken, newPair.refreshToken, newPair.user.role)
             response.request.signWith(newPair.accessToken)
         }
     }

@@ -12,84 +12,55 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.internal.NavContext
-import androidx.navigation.toRoute
 import com.flowbytestudio.core.domain.AuthRepository
-import com.flowbytestudio.ticketapp.navigation.TicketDetail
-import com.flowbytestudio.ticketapp.screen.HomeScreen
 import com.flowbytestudio.ticketapp.screen.LoginScreen
 import com.flowbytestudio.ticketapp.screen.RegisterScreen
-import com.flowbytestudio.ticketapp.screen.TicketDetailScreen
-import com.flowbytestudio.ticketapp.screen.EventDetailScreen
 import org.koin.compose.koinInject
-
-
+import com.flowbytestudio.core.domain.UserRole
 
 @Composable
 fun AppNavHost(
     navController: NavHostController = rememberNavController(),
     authRepository: AuthRepository = koinInject()
-)
-{
+) {
     val isLoggedIn by authRepository.isLoggedIn.collectAsStateWithLifecycle(initialValue = null)
+    val userRole by authRepository.userRole.collectAsStateWithLifecycle(initialValue = null)
 
-    when(isLoggedIn)
-    {
+    when (isLoggedIn) {
         null -> SplashScreen()
-        true -> AuthedNavHost(navController)
+        true -> AuthedNavHost(navController = navController, userRole = userRole, authRepository = authRepository)
         false -> UnAuthedNavHost(navController)
     }
 }
 
 @Composable
-private fun SplashScreen(){
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+private fun SplashScreen() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator()
     }
 }
 
 @Composable
-private fun AuthedNavHost(navController: NavHostController){
-    NavHost(navController=navController, startDestination = Home){
-        composable<Home> {
-            HomeScreen(
-                onTicketClick = { ticketId ->
-                    navController.navigate(TicketDetail(ticketId = ticketId))
-                },
-                onEventClick = { eventId ->
-                    navController.navigate(EventDetail(id = eventId))
-                }
-            )
-        }
-        composable<EventDetail> { backStackEntry ->
-            val route = backStackEntry.toRoute<EventDetail>()
-            EventDetailScreen(
-                eventId = route.id,
-                onBackClick = { navController.navigateUp() },
-                onPurchaseSuccess = {
-                    navController.navigate(Home) {
-                        popUpTo(Home) { inclusive = true }
-                    }
-                }
-            )
-        }
-        composable<TicketDetail> { backStackEntry ->
-            val route = backStackEntry.toRoute<TicketDetail>()
-            TicketDetailScreen(
-                ticketId = route.ticketId,
-                onBackClick = { navController.navigateUp() }
-            )
+private fun AuthedNavHost(
+    navController: NavHostController,
+    userRole: UserRole?,
+    authRepository: AuthRepository
+) {
+    val roleGraph = RoleNavGraph.fromRole(userRole)
+    NavHost(navController = navController, startDestination = roleGraph.startDestination) {
+        with(roleGraph) {
+            registerDestinations(navController, authRepository)
         }
     }
 }
 
 @Composable
-private fun UnAuthedNavHost(navController: NavHostController){
-    NavHost(navController=navController, startDestination = Login) {
-        composable<Login>{
+private fun UnAuthedNavHost(navController: NavHostController) {
+    NavHost(navController = navController, startDestination = Login) {
+        composable<Login> {
             LoginScreen(
                 onLoginSuccess = {},
-                onNavigateToRegister = {navController.navigate(Register)}
+                onNavigateToRegister = { navController.navigate(Register) }
             )
         }
         composable<Register> {

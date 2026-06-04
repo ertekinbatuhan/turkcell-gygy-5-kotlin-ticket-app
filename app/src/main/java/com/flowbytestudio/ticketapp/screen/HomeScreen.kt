@@ -3,6 +3,7 @@ package com.flowbytestudio.ticketapp.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -33,6 +34,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -41,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.flowbytestudio.core.domain.Event
@@ -60,6 +63,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import com.flowbytestudio.core.domain.AuthRepository
+import com.flowbytestudio.core.domain.UserRole
 import com.flowbytestudio.core.ui.components.PullToRefresh
 import org.koin.compose.koinInject
 import org.koin.androidx.compose.koinViewModel
@@ -113,6 +117,7 @@ fun HomeScreen(
         }
     }
 }
+
 
 @Composable
 private fun HomeContent(
